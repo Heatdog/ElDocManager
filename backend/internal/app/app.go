@@ -1,6 +1,7 @@
 package app
 
 import (
+	"ElDocManager/internal/config"
 	"ElDocManager/internal/transport"
 	"fmt"
 	"log"
@@ -20,7 +21,14 @@ func Run() {
 		w.Write([]byte("Тест"))
 	}).Methods(http.MethodGet)
 
-	err := http.ListenAndServe(":8080", router)
+	cors, err := config.CorsSettings()
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
+	handler := cors.Handler(router)
+
+	err = http.ListenAndServe(":8080", handler)
 	if err != nil {
 		log.Fatal(err)
 	}

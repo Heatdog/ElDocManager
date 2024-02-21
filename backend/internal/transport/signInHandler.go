@@ -21,10 +21,12 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	var user LoginForm
 	json.Unmarshal(body, &user)
 	fmt.Println(user)
+	token := "1"
 	resp, _ := json.Marshal(map[string]interface{}{
-		"token": "1",
+		"token": token,
 	})
 	w.Write(resp)
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Authorization", "Bearer "+token)
 }
