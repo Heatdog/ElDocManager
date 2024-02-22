@@ -7,10 +7,17 @@ import (
 	"github.com/spf13/viper"
 )
 
+type CorsStrorageConfig struct {
+	AllowedMethods []string
+	AllowedOrigins []string
+	AllowedHeader  []string
+	ExposedHeaders []string
+}
+
 func CorsSettings() (*cors.Cors, error) {
-	viper.SetConfigName("frontend")
-	viper.SetConfigType("json")
-	viper.AddConfigPath("./configs/frontend")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./configs")
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err
@@ -21,7 +28,7 @@ func CorsSettings() (*cors.Cors, error) {
 			http.MethodGet, http.MethodDelete, http.MethodPost,
 		},
 		AllowedOrigins: []string{
-			viper.GetString("frontendHost"),
+			"http://localhost:3000",
 		},
 		AllowedHeaders: []string{
 			"Content-Type",

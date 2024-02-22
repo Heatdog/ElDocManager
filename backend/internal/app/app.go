@@ -3,7 +3,7 @@ package app
 import (
 	"ElDocManager/internal/config"
 	"ElDocManager/internal/transport"
-	"fmt"
+	"ElDocManager/pkg/logging"
 	"log"
 	"net/http"
 
@@ -11,15 +11,16 @@ import (
 )
 
 func Run() {
+	logger := logging.GetLogger()
+
+	logger.Info("create router")
 	router := mux.NewRouter()
 
 	routerSub := router.PathPrefix("/api").Subrouter()
+	logger.Info("register login endpoint")
 	routerSub.HandleFunc("/login", transport.SignInHandler).Methods(http.MethodPost)
+	logger.Info("register registration endpoint")
 	routerSub.HandleFunc("/register", transport.SignUpHandler).Methods(http.MethodPost)
-	routerSub.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Get action")
-		w.Write([]byte("Тест"))
-	}).Methods(http.MethodGet)
 
 	cors, err := config.CorsSettings()
 	if err != nil {

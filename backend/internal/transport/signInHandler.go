@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"ElDocManager/pkg/logging"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +14,8 @@ type LoginForm struct {
 }
 
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
+	logger := logging.GetLogger()
+	logger.Info("login post action")
 	fmt.Println("POST action")
 	var body []byte
 	body, _ = io.ReadAll(r.Body)
@@ -29,4 +32,5 @@ func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Authorization", "Bearer "+token)
+	logger.Infof("Succesfull authorization user: %s", user.Login)
 }
