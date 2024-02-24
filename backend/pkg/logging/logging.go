@@ -61,7 +61,6 @@ func init() {
 	}
 
 	if err := os.Mkdir("logs", 0777); err != nil {
-
 	}
 
 	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0777)

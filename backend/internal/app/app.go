@@ -1,8 +1,8 @@
 package app
 
 import (
+	"ElDocManager/internal/auth"
 	"ElDocManager/internal/config"
-	"ElDocManager/internal/transport"
 	"ElDocManager/pkg/logging"
 	"log"
 	"net/http"
@@ -14,22 +14,21 @@ func Run() {
 	logger := logging.GetLogger()
 
 	logger.Info("create router")
-	router := mux.NewRouter()
+	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
-	routerSub := router.PathPrefix("/api").Subrouter()
-	logger.Info("register login endpoint")
-	routerSub.HandleFunc("/login", transport.SignInHandler).Methods(http.MethodPost)
-	logger.Info("register registration endpoint")
-	routerSub.HandleFunc("/register", transport.SignUpHandler).Methods(http.MethodPost)
+	logger.Info("register auth handler")
+	handler := auth.NewHandler(logger)
+	handler.Register(router)
 
 	cors, err := config.CorsSettings()
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 
-	handler := cors.Handler(router)
+	corsHandler := cors.Handler(router)
 
-	err = http.ListenAndServe(":8080", handler)
+	logger.Info("start application")
+	err = http.ListenAndServe("127.0.0.1:8080", corsHandler)
 	if err != nil {
 		log.Fatal(err)
 	}

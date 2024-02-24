@@ -6,4 +6,4 @@ postgreStorage:
   username: postgres
   password: 123
 
-frontendHost: http://localhost:3000/login
+frontendHost: "127.0.0.1:3000"
