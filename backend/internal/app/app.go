@@ -4,6 +4,7 @@ import (
 	"ElDocManager/internal/auth"
 	"ElDocManager/internal/config"
 	"ElDocManager/pkg/logging"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,6 +13,8 @@ import (
 
 func Run() {
 	logger := logging.GetLogger()
+	cfg := config.GetConfig()
+	cors := cfg.CorsSettings()
 
 	logger.Info("create router")
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
@@ -20,15 +23,10 @@ func Run() {
 	handler := auth.NewHandler(logger)
 	handler.Register(router)
 
-	cors, err := config.CorsSettings()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
 	corsHandler := cors.Handler(router)
 
-	logger.Info("start application")
-	err = http.ListenAndServe("127.0.0.1:8080", corsHandler)
+	logger.Info("listen tcp")
+	err := http.ListenAndServe(fmt.Sprintf("%s:%s", cfg.BackendStorage.BindIp, cfg.BackendStorage.Port), corsHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
