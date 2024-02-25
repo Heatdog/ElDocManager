@@ -1,8 +1,9 @@
 package app
 
 import (
-	"ElDocManager/internal/auth"
 	"ElDocManager/internal/config"
+	"ElDocManager/internal/transport"
+	"ElDocManager/internal/user"
 	"ElDocManager/pkg/logging"
 	"fmt"
 	"log"
@@ -19,9 +20,12 @@ func Run() {
 	logger.Info("create router")
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
-	logger.Info("register auth handler")
-	handler := auth.NewHandler(logger)
-	handler.Register(router)
+	logger.Info("regiser services")
+	authService := user.NewAuthService()
+
+	logger.Info("register handlers")
+	handlerAuth := transport.NewHandlerAuth(logger, authService)
+	handlerAuth.Register(router)
 
 	corsHandler := cors.Handler(router)
 

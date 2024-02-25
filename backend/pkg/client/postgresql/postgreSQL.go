@@ -30,7 +30,7 @@ func NewClient(ctx context.Context, sc config.PostgreStorageConfig) (conn *pgx.C
 			return err
 		}
 		return nil
-	}, sc.MaxAttemps, 5*time.Second)
+	}, sc.MaxAttemps, time.Duration(sc.MaxAttemps*int(time.Second)))
 
 	return conn, nil
 }

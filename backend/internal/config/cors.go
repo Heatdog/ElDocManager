@@ -5,7 +5,6 @@ import (
 )
 
 func CorsSettings(corsConfig CorsStorageConfig) *cors.Cors {
-
 	c := cors.New(cors.Options{
 		AllowedMethods: corsConfig.AllowedMethods,
 		AllowedOrigins: corsConfig.AllowedOrigins,
