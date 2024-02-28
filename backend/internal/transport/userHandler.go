@@ -30,12 +30,12 @@ const (
 )
 
 func (h *handlerAuth) Register(router *mux.Router) {
-	router.HandleFunc(signInURL, h.SignIn).Methods(http.MethodPost)
-	router.HandleFunc(signUpURL, h.SignUp).Methods(http.MethodPost)
-	router.HandleFunc(signOutURL, h.SugnOut).Methods(http.MethodPost)
+	router.HandleFunc(signInURL, h.signIn).Methods(http.MethodPost)
+	router.HandleFunc(signUpURL, h.signUp).Methods(http.MethodPost)
+	router.HandleFunc(signOutURL, h.signOut).Methods(http.MethodPost)
 }
 
-func (h *handlerAuth) SignIn(w http.ResponseWriter, r *http.Request) {
+func (h *handlerAuth) signIn(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("sign in post action")
 	var body []byte
 	body, err := io.ReadAll(r.Body)
@@ -70,7 +70,7 @@ func (h *handlerAuth) SignIn(w http.ResponseWriter, r *http.Request) {
 	h.logger.Infof("Succesfull authorization user: %s", userSignIn.Login)
 }
 
-func (h *handlerAuth) SignUp(w http.ResponseWriter, r *http.Request) {
+func (h *handlerAuth) signUp(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("sign up post action")
 	var body []byte
 	body, err := io.ReadAll(r.Body)
@@ -107,6 +107,6 @@ func (h *handlerAuth) SignUp(w http.ResponseWriter, r *http.Request) {
 	h.logger.Infof("successful authorize")
 }
 
-func (h *handlerAuth) SugnOut(w http.ResponseWriter, r *http.Request) {
+func (h *handlerAuth) signOut(w http.ResponseWriter, r *http.Request) {
 
 }

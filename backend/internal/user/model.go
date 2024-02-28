@@ -2,12 +2,12 @@ package user
 
 import "time"
 
-type Role int
+type Role string
 
 const (
-	Administrator Role = iota
-	HeadOfDepatment
-	Worker
+	Administrator   Role = "Administrator"
+	HeadOfDepatment Role = "HeadOfDepatment"
+	Worker          Role = "Worker"
 )
 
 type User struct {
@@ -16,6 +16,7 @@ type User struct {
 	Name        string `json:"name"`
 	Surname     string `json:"surname"`
 	Email       string `json:"email"`
+	Password    string
 	Role        Role
 	Created     time.Time
 	IsConfirmed bool

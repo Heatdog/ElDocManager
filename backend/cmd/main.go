@@ -1,8 +1,6 @@
 package main
 
-import (
-	"ElDocManager/internal/app"
-)
+import "ElDocManager/internal/app"
 
 func main() {
 	app.Run()

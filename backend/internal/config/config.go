@@ -29,23 +29,21 @@ type CorsStorageConfig struct {
 }
 
 type PostgreStorageConfig struct {
-	Username   string `yaml:"username"`
-	Password   string `yaml:"password"`
-	Host       string `yaml:"host"`
-	Port       string `yaml:"port"`
-	Database   string `yaml:"database"`
-	MaxAttemps int    `yaml:"max_attemps"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Database string `yaml:"database"`
 }
 
 var instance *Config
 var once sync.Once
 
-func GetConfig() *Config {
+func GetConfig(logger *logging.Logger) *Config {
 	once.Do(func() {
-		logger := logging.GetLogger()
 		logger.Info("read application instance")
 		instance = &Config{}
-		viper.SetConfigFile("configs/config.yaml")
+		viper.SetConfigFile("../configs/config.yaml")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal(err)
 		}
