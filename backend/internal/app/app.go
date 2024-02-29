@@ -25,20 +25,20 @@ func Run() {
 	if err != nil {
 		logger.Fatalf("%v", err)
 	}
+	defer postgreSQLClient.Close()
+
 	logger.Info("Init repos")
 	userRepo := userDb.NewUserRepository(postgreSQLClient, logger)
-
-	userRepo.FindAll(context.Background())
 
 	logger.Info("create router")
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
 	logger.Info("regiser services")
-	authService := user.NewAuthService()
+	userService := user.NewUserService(logger, userRepo)
 
 	logger.Info("register handlers")
-	handlerAuth := transport.NewHandlerAuth(logger, authService)
-	handlerAuth.Register(router)
+	handlerUser := transport.NewUserHandler(logger, userService)
+	handlerUser.Register(router)
 
 	corsHandler := cors.Handler(router)
 

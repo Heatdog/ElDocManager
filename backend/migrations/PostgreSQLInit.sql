@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Users(
     email EMAIL NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role users_role NOT NULL DEFAULT 'Worker',
-    created TIMESTAMP DEFAULT Now(),
-    is_confirmed BOOLEAN DEFAULT FALSE,
+    created NOT NULL TIMESTAMP DEFAULT Now(),
+    is_confirmed NOT NULL BOOLEAN DEFAULT FALSE,
     CHECK (LENGTH(login) > 3 AND LENGTH(password) > 5)
 );

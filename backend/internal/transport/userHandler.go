@@ -3,7 +3,6 @@ package transport
 import (
 	"ElDocManager/internal/user"
 	"ElDocManager/pkg/logging"
-	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -11,13 +10,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type handlerAuth struct {
+type userHandler struct {
 	logger  *logging.Logger
 	service user.UserService
 }
 
-func NewHandlerAuth(logger *logging.Logger, service user.UserService) Handler {
-	return &handlerAuth{
+func NewUserHandler(logger *logging.Logger, service user.UserService) Handler {
+	return &userHandler{
 		logger:  logger,
 		service: service,
 	}
@@ -29,13 +28,13 @@ const (
 	signOutURL = "/quite"
 )
 
-func (h *handlerAuth) Register(router *mux.Router) {
+func (h *userHandler) Register(router *mux.Router) {
 	router.HandleFunc(signInURL, h.signIn).Methods(http.MethodPost)
 	router.HandleFunc(signUpURL, h.signUp).Methods(http.MethodPost)
 	router.HandleFunc(signOutURL, h.signOut).Methods(http.MethodPost)
 }
 
-func (h *handlerAuth) signIn(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) signIn(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("sign in post action")
 	var body []byte
 	body, err := io.ReadAll(r.Body)
@@ -53,7 +52,7 @@ func (h *handlerAuth) signIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := h.service.SignIn(context.Background(), &userSignIn)
+	token := h.service.SignIn(r.Context(), &userSignIn)
 
 	resp, err := json.Marshal(map[string]interface{}{
 		"token": token,
@@ -70,7 +69,7 @@ func (h *handlerAuth) signIn(w http.ResponseWriter, r *http.Request) {
 	h.logger.Infof("Succesfull authorization user: %s", userSignIn.Login)
 }
 
-func (h *handlerAuth) signUp(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) signUp(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("sign up post action")
 	var body []byte
 	body, err := io.ReadAll(r.Body)
@@ -81,32 +80,26 @@ func (h *handlerAuth) signUp(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	var userSignUp user.UserSignUp
-	if err := json.Unmarshal(body, &userSignUp); err != nil {
+	userSignUp := &user.UserSignUp{}
+	if err := json.Unmarshal(body, userSignUp); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		h.logger.Infof("bad request: %s", err.Error())
 		return
 	}
 
-	if err := h.service.SignUp(context.Background(), &userSignUp); err != nil {
+	if err := h.service.SignUp(r.Context(), userSignUp); err != nil {
 		//  посмтреть разные коды ошибок, т.к. може быть неуникальные значения
 		w.WriteHeader(http.StatusInternalServerError)
 		h.logger.Infof("error happened: %s", err.Error())
 		return
 	}
+	// сервис работы с запросами на подключение к системе
 
-	isSuccessful, err := json.Marshal(false)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		h.logger.Infof("parsing error: %s", err.Error())
-		return
-	}
-	w.Write(isSuccessful)
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-type", "aplication/json")
 	h.logger.Infof("successful authorize")
 }
 
-func (h *handlerAuth) signOut(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) signOut(w http.ResponseWriter, r *http.Request) {
 
 }

@@ -16,7 +16,7 @@ type User struct {
 	Name        string `json:"name"`
 	Surname     string `json:"surname"`
 	Email       string `json:"email"`
-	Password    string
+	Password    []byte
 	Role        Role
 	Created     time.Time
 	IsConfirmed bool
