@@ -10,30 +10,30 @@ import (
 
 type Config struct {
 	IsDebug        bool                 `yaml:"is_debug"`
-	BackendStorage ListenBackend        `yaml:"listen_backend"`
-	CorseStorage   CorsStorageConfig    `yaml:"cors_settings"`
-	PostgreStorage PostgreStorageConfig `yaml:"postgre_settings"`
+	BackendStorage ListenBackend        `mapstructure:"listen_backend"`
+	CorseStorage   CorsStorageConfig    `mapstructure:"cors_settings"`
+	PostgreStorage PostgreStorageConfig `mapstructure:"postgre_settings"`
 }
 
 type ListenBackend struct {
-	Type   string `yaml:"type"`
-	BindIp string `yaml:"bind_ip"`
-	Port   string `yaml:"port"`
+	Type   string `mapstructure:"type"`
+	BindIp string `mapstructure:"bind_ip"`
+	Port   string `mapstructure:"port"`
 }
 
 type CorsStorageConfig struct {
-	AllowedMethods []string `yaml:"allowed_methods"`
-	AllowedOrigins []string `yaml:"allowed_origins"`
-	AllowedHeader  []string `yaml:"allowed_headers"`
-	ExposedHeaders []string `yaml:"exposed_headers"`
+	AllowedMethods []string `mapstructure:"allowed_methods"`
+	AllowedOrigins []string `mapstructure:"allowed_origins"`
+	AllowedHeader  []string `mapstructure:"allowed_headers"`
+	ExposedHeaders []string `mapstructure:"exposed_headers"`
 }
 
 type PostgreStorageConfig struct {
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	Database string `yaml:"database"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Database string `mapstructure:"database"`
 }
 
 var instance *Config

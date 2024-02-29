@@ -2,19 +2,19 @@
 is_debug: true
 
 listen_backend:
-- type: port
-- bind_ip: 127.0.0.1
-- port: 8080
+  type: port
+  bind_ip: localhost
+  port: 8080
 
 postgre_settings:
-- host: localhost
-- port: 5432
-- database: eldoc
-- username: postgres
-- password: 123
+  host: localhost
+  port: 5432
+  database: eldoc
+  username: postgres
+  password: 123
 
 cors_settings:
-- allowed_methods: ["GET", "POST", "DELETE"]
-- allowed_headers: ["Content-Type"]
-- allowed_origins: ["127.0.0.1:3000"]
-- exposed_headers: ["Authorization", "Content-Type"]
+  allowed_methods: ["GET", "POST", "DELETE"]
+  allowed_headers: ["Content-Type"]
+  allowed_origins: ["127.0.0.1:3000"]
+  exposed_headers: ["Authorization", "Content-Type"]
