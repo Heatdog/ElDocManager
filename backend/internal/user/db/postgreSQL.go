@@ -70,14 +70,33 @@ func (r *repository) FindAll(ctx context.Context) ([]user.User, error) {
 	return users, nil
 }
 
-func (r *repository) FindOne(ctx context.Context, id string) (user.User, error) {
-	r.logger.Infof("SQL SELECT Users")
+func (r *repository) FindOneWithId(ctx context.Context, id string) (user.User, error) {
+	r.logger.Infof("SQL SELECT Users by Id")
 	q := `
 		SELECT id, login, name, surname, email, role, created, is_confirmed 
 		FROM Users
 		WHERE id = $1
 	`
 	row := r.client.QueryRow(ctx, q, id)
+
+	var userRow user.User
+
+	if err := row.Scan(&userRow); err != nil {
+		r.logger.Errorf("SQL error: %s", err.Error())
+		return user.User{}, err
+	}
+
+	return userRow, nil
+}
+
+func (r *repository) FindOneWithLogin(ctx context.Context, login string) (user.User, error) {
+	r.logger.Infof("SQL Select Users by Login")
+	q := `
+		SELECT id, login, name, surname, email, role, created, is_confirmed 
+		FROM Users
+		WHERE login = $1
+	`
+	row := r.client.QueryRow(ctx, q, login)
 
 	var userRow user.User
 

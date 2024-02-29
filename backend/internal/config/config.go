@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	IsDebug        bool                 `yaml:"is_debug"`
+	JwtKey         string               `yaml:"jwt_auth_key"`
 	BackendStorage ListenBackend        `mapstructure:"listen_backend"`
 	CorseStorage   CorsStorageConfig    `mapstructure:"cors_settings"`
 	PostgreStorage PostgreStorageConfig `mapstructure:"postgre_settings"`
@@ -50,6 +51,11 @@ func GetConfig(logger *logging.Logger) *Config {
 		if err := viper.Unmarshal(instance); err != nil {
 			logger.Fatal(err)
 		}
+		viper.SetConfigFile("../configs/secret_config.yaml")
+		if err := viper.ReadInConfig(); err != nil {
+			logger.Fatal(err)
+		}
+		instance.JwtKey = viper.GetString("jwt_auth_key")
 	})
 
 	return instance

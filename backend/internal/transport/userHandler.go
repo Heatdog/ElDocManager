@@ -13,12 +13,14 @@ import (
 type userHandler struct {
 	logger  *logging.Logger
 	service user.UserService
+	jwtKey  string
 }
 
-func NewUserHandler(logger *logging.Logger, service user.UserService) Handler {
+func NewUserHandler(logger *logging.Logger, service user.UserService, jwtKey string) Handler {
 	return &userHandler{
 		logger:  logger,
 		service: service,
+		jwtKey:  jwtKey,
 	}
 }
 
@@ -45,14 +47,19 @@ func (h *userHandler) signIn(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	var userSignIn user.UserSignIn
-	if err := json.Unmarshal(body, &userSignIn); err != nil {
+	userSignIn := &user.UserSignIn{}
+	if err := json.Unmarshal(body, userSignIn); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		h.logger.Infof("bad request: %s", err.Error())
 		return
 	}
 
-	token := h.service.SignIn(r.Context(), &userSignIn)
+	token, err := h.service.SignIn(r.Context(), userSignIn, h.jwtKey)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		h.logger.Infof("bad request: %s", err.Error())
+		return
+	}
 
 	resp, err := json.Marshal(map[string]interface{}{
 		"token": token,

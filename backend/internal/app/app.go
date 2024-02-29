@@ -37,7 +37,7 @@ func Run() {
 	userService := user.NewUserService(logger, userRepo)
 
 	logger.Info("register handlers")
-	handlerUser := transport.NewUserHandler(logger, userService)
+	handlerUser := transport.NewUserHandler(logger, userService, cfg.JwtKey)
 	handlerUser.Register(router)
 
 	corsHandler := cors.Handler(router)
