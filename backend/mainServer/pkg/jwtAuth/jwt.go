@@ -15,7 +15,7 @@ type TokenFields struct {
 func GenerateToken(fields TokenFields, key string) (string, error) {
 	payload := jwt.MapClaims{
 		"sub":  fields.ID,
-		"exp":  time.Now().Add(time.Hour * 72).Unix(),
+		"exp":  time.Now().Add(time.Minute * 15).Unix(),
 		"role": fields.Role,
 	}
 
