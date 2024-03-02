@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "./authServer";
+
+service AuthServer{
+    rpc GetTokens(TokenRequest) returns (TokenRespons) {}
+}
+
+message TokenRequest {
+    string refreshToken = 1;
+}
+
+message TokenRespons {
+    string accessToken = 1;
+    string newRefreshToken = 2;
+}
