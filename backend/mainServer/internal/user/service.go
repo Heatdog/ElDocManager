@@ -1,11 +1,12 @@
 package user
 
 import (
-	cryptohash "ElDocManager/pkg/cryptoHash"
-	jwt_auth "ElDocManager/pkg/jwtAuth"
+	cryptohash "github.com/Heatdog/ElDocManager/backend/mainServer/pkg/cryptoHash"
+	jwt_auth "github.com/Heatdog/ElDocManager/backend/mainServer/pkg/jwtAuth"
 
-	"ElDocManager/pkg/logging"
 	"context"
+
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 )
 
 type UserService interface {

@@ -1,19 +1,21 @@
 package config
 
 import (
-	"ElDocManager/pkg/logging"
 	"sync"
+
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 
 	"github.com/rs/cors"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	IsDebug        bool                 `yaml:"is_debug"`
-	JwtKey         string               `yaml:"jwt_auth_key"`
-	BackendStorage ListenBackend        `mapstructure:"listen_backend"`
-	CorseStorage   CorsStorageConfig    `mapstructure:"cors_settings"`
-	PostgreStorage PostgreStorageConfig `mapstructure:"postgre_settings"`
+	IsDebug           bool                 `yaml:"is_debug"`
+	JwtKey            string               `yaml:"jwt_auth_key"`
+	BackendStorage    ListenBackend        `mapstructure:"listen_backend"`
+	CorseStorage      CorsStorageConfig    `mapstructure:"cors_settings"`
+	PostgreStorage    PostgreStorageConfig `mapstructure:"postgre_settings"`
+	AuthServerStorage ListenAuthServer     `mapstructure:"listen_auth_server"`
 }
 
 type ListenBackend struct {
@@ -35,6 +37,12 @@ type PostgreStorageConfig struct {
 	Host     string `mapstructure:"host"`
 	Port     string `mapstructure:"port"`
 	Database string `mapstructure:"database"`
+}
+
+type ListenAuthServer struct {
+	Type   string `mapstructure:"type"`
+	BindIp string `mapstructure:"bind_ip"`
+	Port   string `mapstructure:"port"`
 }
 
 var instance *Config

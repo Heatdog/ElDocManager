@@ -1,11 +1,12 @@
 package transport
 
 import (
-	"ElDocManager/internal/user"
-	"ElDocManager/pkg/logging"
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/user"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 
 	"github.com/gorilla/mux"
 )

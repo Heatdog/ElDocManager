@@ -1,18 +1,22 @@
 package app
 
 import (
-	"ElDocManager/internal/config"
-	"ElDocManager/internal/transport"
-	"ElDocManager/internal/user"
-	userDb "ElDocManager/internal/user/db"
-	"ElDocManager/pkg/client/postgresql"
-	"ElDocManager/pkg/logging"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/config"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/transport"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/user"
+	userDb "github.com/Heatdog/ElDocManager/backend/mainServer/internal/user/db"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/client/postgresql"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
+
+	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
+
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
 )
 
 func Run() {
@@ -26,6 +30,23 @@ func Run() {
 		logger.Fatalf("%v", err)
 	}
 	defer postgreSQLClient.Close()
+
+	logger.Info("connection to auth server")
+	authConn, err := grpc.Dial(":8081", grpc.WithInsecure())
+	if err != nil {
+		logger.Fatalf("auth server conn error: %s", err.Error())
+	}
+
+	authClient := authServer.NewAuthServerClient(authConn)
+
+	res, err := authClient.GetTokens(context.Background(), &authServer.TokenRequest{
+		RefreshToken: "3",
+	})
+	if err != nil {
+		logger.Fatalf("some error %s", err.Error())
+	}
+	logger.Infof("Access token %s", res.AccessToken)
+	logger.Infof("Refresh token %s", res.NewRefreshToken)
 
 	logger.Info("Init repos")
 	userRepo := userDb.NewUserRepository(postgreSQLClient, logger)

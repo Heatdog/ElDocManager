@@ -1,10 +1,11 @@
 package userDb
 
 import (
-	"ElDocManager/internal/user"
-	"ElDocManager/pkg/client/postgresql"
-	"ElDocManager/pkg/logging"
 	"context"
+
+	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/user"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/client/postgresql"
+	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 )
 
 type repository struct {

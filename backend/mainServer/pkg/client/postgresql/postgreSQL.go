@@ -1,11 +1,12 @@
 package postgresql
 
 import (
-	"ElDocManager/internal/config"
-	repeatable "ElDocManager/pkg/utils"
 	"context"
 	"fmt"
 	"time"
+
+	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/config"
+	repeatable "github.com/Heatdog/ElDocManager/backend/mainServer/pkg/utils"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"

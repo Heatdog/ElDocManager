@@ -6,7 +6,7 @@ import (
 
 	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 type GRPCServer struct {
