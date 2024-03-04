@@ -1,10 +1,11 @@
 package app
 
 import (
-	"authServer/internal/server"
-	authServer "authServer/pkg/proto"
 	"log"
 	"net"
+
+	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server"
+	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
 
 	"google.golang.org/grpc"
 )

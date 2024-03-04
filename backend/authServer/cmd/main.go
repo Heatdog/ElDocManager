@@ -1,6 +1,6 @@
 package main
 
-import "authServer/internal/app"
+import "github.com/Heatdog/ElDocManager/backend/authServer/internal/app"
 
 func main() {
 	app.App()

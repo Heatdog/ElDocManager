@@ -4,15 +4,26 @@ package auth;
 
 option go_package = "./authServer";
 
+// GetTokens - у пользователя закончился access token -> дергаем метод, в нем проверяется соответсвие id + refres
+//             тогда выдаем новый access + refresh заменяем для пользователя
+// CreateRefreshToken - у пользователя нет refresh token -> дергаем метод, и проверяем redis. У пользователя есть
+//              refresh - заменяем + выдаем access. Нет в системе -> добавлеям новый
+
 service AuthServer{
     rpc GetTokens(TokenRequest) returns (TokenRespons) {}
+    rpc CreateRefreshToken(TokenCreateRequest) returns (TokenRespons) {}
 }
 
 message TokenRequest {
-    string refreshToken = 1;
+    string userId = 1;
+    string refreshToken = 2;
 }
 
 message TokenRespons {
     string accessToken = 1;
     string newRefreshToken = 2;
+}
+
+message TokenCreateRequest {
+    string userId = 1;
 }

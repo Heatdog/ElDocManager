@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.12.4
-// source: api/proto/auth.proto
+// source: pkg/proto/auth.proto
 
 package authServer
 
@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServerClient interface {
 	GetTokens(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*TokenRespons, error)
+	CreateRefreshToken(ctx context.Context, in *TokenCreateRequest, opts ...grpc.CallOption) (*TokenRespons, error)
 }
 
 type authServerClient struct {
@@ -42,11 +43,21 @@ func (c *authServerClient) GetTokens(ctx context.Context, in *TokenRequest, opts
 	return out, nil
 }
 
+func (c *authServerClient) CreateRefreshToken(ctx context.Context, in *TokenCreateRequest, opts ...grpc.CallOption) (*TokenRespons, error) {
+	out := new(TokenRespons)
+	err := c.cc.Invoke(ctx, "/auth.AuthServer/CreateRefreshToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServerServer is the server API for AuthServer service.
 // All implementations must embed UnimplementedAuthServerServer
 // for forward compatibility
 type AuthServerServer interface {
 	GetTokens(context.Context, *TokenRequest) (*TokenRespons, error)
+	CreateRefreshToken(context.Context, *TokenCreateRequest) (*TokenRespons, error)
 	mustEmbedUnimplementedAuthServerServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedAuthServerServer struct {
 
 func (UnimplementedAuthServerServer) GetTokens(context.Context, *TokenRequest) (*TokenRespons, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTokens not implemented")
+}
+func (UnimplementedAuthServerServer) CreateRefreshToken(context.Context, *TokenCreateRequest) (*TokenRespons, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRefreshToken not implemented")
 }
 func (UnimplementedAuthServerServer) mustEmbedUnimplementedAuthServerServer() {}
 
@@ -88,6 +102,24 @@ func _AuthServer_GetTokens_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthServer_CreateRefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TokenCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServerServer).CreateRefreshToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthServer/CreateRefreshToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServerServer).CreateRefreshToken(ctx, req.(*TokenCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthServer_ServiceDesc is the grpc.ServiceDesc for AuthServer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -99,7 +131,11 @@ var AuthServer_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetTokens",
 			Handler:    _AuthServer_GetTokens_Handler,
 		},
+		{
+			MethodName: "CreateRefreshToken",
+			Handler:    _AuthServer_CreateRefreshToken_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/auth.proto",
+	Metadata: "pkg/proto/auth.proto",
 }
