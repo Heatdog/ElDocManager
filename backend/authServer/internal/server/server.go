@@ -2,15 +2,19 @@ package server
 
 import (
 	"context"
-	"fmt"
 
 	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
-
-	"github.com/redis/go-redis/v9"
 )
 
 type GRPCServer struct {
 	authServer.UnimplementedAuthServerServer
+	storage TokenRepository
+}
+
+func NewGRPCServer(repo TokenRepository) *GRPCServer {
+	return &GRPCServer{
+		storage: repo,
+	}
 }
 
 type RefreshTokenUserId struct {
@@ -19,43 +23,28 @@ type RefreshTokenUserId struct {
 }
 
 func (s *GRPCServer) GetTokens(ctx context.Context, req *authServer.TokenRequest) (*authServer.TokenRespons, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
-	})
 
-	ping, err := client.Ping(ctx).Result()
+	accessToken, refreashToken, err := s.storage.UpdateToken(ctx, req.UserId, req.Role, req.RefreshToken)
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, nil
+		return nil, err
 	}
-
-	fmt.Println(ping)
-
-	if err = client.Set(ctx, "name", "Elliot", 0).Err(); err != nil {
-		fmt.Printf("Failed to set value in the redis instance: %s", err.Error())
-		return nil, nil
-	}
-
-	val, err := client.Get(ctx, "name").Result()
-	if err != nil {
-		fmt.Printf("failed to get value from redis: %s", err.Error())
-		return nil, nil
-	}
-
-	fmt.Printf("value from redis from redis: %s", val)
 
 	return &authServer.TokenRespons{
-		AccessToken:     "1",
-		NewRefreshToken: "2",
+		AccessToken:     accessToken,
+		NewRefreshToken: refreashToken,
 	}, nil
 }
 
 func (s *GRPCServer) CreateRefreshToken(ctx context.Context,
 	req *authServer.TokenCreateRequest) (*authServer.TokenRespons, error) {
+
+	accessToken, refreshToken, err := s.storage.InsertToken(ctx, req.UserId, req.Role)
+	if err != nil {
+		return nil, err
+	}
+
 	return &authServer.TokenRespons{
-		AccessToken:     "1",
-		NewRefreshToken: "2",
+		AccessToken:     accessToken,
+		NewRefreshToken: refreshToken,
 	}, nil
 }

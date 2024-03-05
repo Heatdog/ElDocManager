@@ -1,0 +1,9 @@
+
+secret_key: super_secret
+
+listen_redis:
+  type: port
+  bind_ip: localhost
+  port: 6379
+  password: 
+  token_expiration_days: 7

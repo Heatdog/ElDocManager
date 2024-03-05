@@ -16,7 +16,8 @@ service AuthServer{
 
 message TokenRequest {
     string userId = 1;
-    string refreshToken = 2;
+    string role = 2;
+    string refreshToken = 3;
 }
 
 message TokenRespons {
@@ -26,4 +27,5 @@ message TokenRespons {
 
 message TokenCreateRequest {
     string userId = 1;
+    string role = 2;
 }

@@ -23,30 +23,23 @@ func Run() {
 	logger := logging.GetLogger()
 	cfg := config.GetConfig(logger)
 	cors := cfg.CorsSettings()
+	ctx := context.Background()
 
 	logger.Info("try to connect to PostgreSQL")
-	postgreSQLClient, err := postgresql.NewClient(context.Background(), cfg.PostgreStorage, 5)
+	postgreSQLClient, err := postgresql.NewClient(ctx, cfg.PostgreStorage, 5)
 	if err != nil {
 		logger.Fatalf("%v", err)
 	}
 	defer postgreSQLClient.Close()
 
 	logger.Info("connection to auth server")
-	authConn, err := grpc.Dial(":8081", grpc.WithInsecure())
+	authConn, err := grpc.Dial(fmt.Sprintf("%s:%s", cfg.AuthServerStorage.BindIp, cfg.AuthServerStorage.Port),
+		grpc.WithInsecure())
 	if err != nil {
 		logger.Fatalf("auth server conn error: %s", err.Error())
 	}
 
-	authClient := authServer.NewAuthServerClient(authConn)
-
-	res, err := authClient.GetTokens(context.Background(), &authServer.TokenRequest{
-		RefreshToken: "3",
-	})
-	if err != nil {
-		logger.Fatalf("some error %s", err.Error())
-	}
-	logger.Infof("Access token %s", res.AccessToken)
-	logger.Infof("Refresh token %s", res.NewRefreshToken)
+	authServer.NewAuthServerClient(authConn)
 
 	logger.Info("Init repos")
 	userRepo := userDb.NewUserRepository(postgreSQLClient, logger)

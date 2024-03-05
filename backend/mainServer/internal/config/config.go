@@ -10,12 +10,11 @@ import (
 )
 
 type Config struct {
-	IsDebug           bool                 `yaml:"is_debug"`
 	JwtKey            string               `yaml:"jwt_auth_key"`
-	BackendStorage    ListenBackend        `mapstructure:"listen_backend"`
+	BackendStorage    ListenBackend        `mapstructure:"main_server_listen"`
 	CorseStorage      CorsStorageConfig    `mapstructure:"cors_settings"`
 	PostgreStorage    PostgreStorageConfig `mapstructure:"postgre_settings"`
-	AuthServerStorage ListenAuthServer     `mapstructure:"listen_auth_server"`
+	AuthServerStorage ListenAuthServer     `mapstructure:"auth_server_listen"`
 }
 
 type ListenBackend struct {
@@ -52,6 +51,7 @@ func GetConfig(logger *logging.Logger) *Config {
 	once.Do(func() {
 		logger.Info("read application instance")
 		instance = &Config{}
+
 		viper.SetConfigFile("../configs/config.yaml")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal(err)
@@ -59,6 +59,15 @@ func GetConfig(logger *logging.Logger) *Config {
 		if err := viper.Unmarshal(instance); err != nil {
 			logger.Fatal(err)
 		}
+
+		viper.SetConfigFile("../../configs/config.yaml")
+		if err := viper.ReadInConfig(); err != nil {
+			logger.Fatal(err)
+		}
+		if err := viper.Unmarshal(instance); err != nil {
+			logger.Fatal(err)
+		}
+
 		viper.SetConfigFile("../configs/secret_config.yaml")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal(err)
