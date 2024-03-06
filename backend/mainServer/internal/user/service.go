@@ -1,12 +1,12 @@
 package user
 
 import (
-	cryptohash "github.com/Heatdog/ElDocManager/backend/mainServer/pkg/cryptoHash"
-	jwt_auth "github.com/Heatdog/ElDocManager/backend/mainServer/pkg/jwtAuth"
-
 	"context"
 
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
+	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
+	cryptohash "github.com/Heatdog/ElDocManager/backend/mainServer/pkg/cryptoHash"
+
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 )
 
 type UserService interface {
@@ -15,16 +15,18 @@ type UserService interface {
 	SignOut(context context.Context)
 }
 
-func NewUserService(logger *logging.Logger, repo UserRepository) UserService {
+func NewUserService(logger *logger.Logger, repo UserRepository, authClient authServer.AuthServerClient) UserService {
 	return &userService{
-		logger: logger,
-		repo:   repo,
+		logger:     logger,
+		repo:       repo,
+		authClient: authClient,
 	}
 }
 
 type userService struct {
-	logger *logging.Logger
-	repo   UserRepository
+	logger     *logger.Logger
+	repo       UserRepository
+	authClient authServer.AuthServerClient
 }
 
 func (s *userService) SignIn(context context.Context, userLogin *UserSignIn, jwtKey string) (string, error) {
@@ -40,20 +42,17 @@ func (s *userService) SignIn(context context.Context, userLogin *UserSignIn, jwt
 		return "", err
 	}
 
-	token, err := jwt_auth.GenerateToken(jwt_auth.TokenFields{
-		ID:   user.ID,
-		Role: string(user.Role),
-	}, jwtKey)
+	res, err := s.authClient.CreateRefreshToken(context, &authServer.TokenCreateRequest{
+		UserId: user.ID,
+		Role:   string(user.Role),
+	})
+
 	if err != nil {
 		s.logger.Errorf("token generation error: %s", err.Error())
 		return "", err
 	}
 
-	_, err = jwt_auth.GenerateRefreshToken()
-	if err != nil {
-		s.logger.Errorf("refresh token generation error: %s", err.Error())
-	}
-	return token, nil
+	return res.AccessToken, nil
 }
 
 func (s *userService) SignUp(context context.Context, userLogin *UserSignUp) error {

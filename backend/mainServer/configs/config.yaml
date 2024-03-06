@@ -1,6 +1,16 @@
 
+main_server_listen:
+  type: port
+  bind_ip: localhost
+  port: 8080
+
+auth_server_listen:
+  type: port
+  bind_ip: localhost
+  port: 8081
+
 postgre_settings:
-  host: localhost
+  host: postgre
   port: 5432
   database: eldoc
   username: postgres

@@ -3,14 +3,14 @@ package config
 import (
 	"sync"
 
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 
 	"github.com/rs/cors"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	JwtKey            string               `yaml:"jwt_auth_key"`
+	JwtKey            string               `mapstructure:"jwt_auth_key"`
 	BackendStorage    ListenBackend        `mapstructure:"main_server_listen"`
 	CorseStorage      CorsStorageConfig    `mapstructure:"cors_settings"`
 	PostgreStorage    PostgreStorageConfig `mapstructure:"postgre_settings"`
@@ -47,12 +47,12 @@ type ListenAuthServer struct {
 var instance *Config
 var once sync.Once
 
-func GetConfig(logger *logging.Logger) *Config {
+func GetConfig(logger *logger.Logger) *Config {
 	once.Do(func() {
 		logger.Info("read application instance")
 		instance = &Config{}
 
-		viper.SetConfigFile("../configs/config.yaml")
+		viper.SetConfigFile("config.yaml")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal(err)
 		}
@@ -60,19 +60,10 @@ func GetConfig(logger *logging.Logger) *Config {
 			logger.Fatal(err)
 		}
 
-		viper.SetConfigFile("../../configs/config.yaml")
+		viper.SetConfigFile("secret_config.yaml")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal(err)
 		}
-		if err := viper.Unmarshal(instance); err != nil {
-			logger.Fatal(err)
-		}
-
-		viper.SetConfigFile("../configs/secret_config.yaml")
-		if err := viper.ReadInConfig(); err != nil {
-			logger.Fatal(err)
-		}
-		instance.JwtKey = viper.GetString("jwt_auth_key")
 	})
 
 	return instance

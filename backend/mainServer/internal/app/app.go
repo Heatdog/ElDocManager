@@ -6,12 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/config"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/transport"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/user"
 	userDb "github.com/Heatdog/ElDocManager/backend/mainServer/internal/user/db"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/client/postgresql"
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 
 	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
 
@@ -20,7 +20,7 @@ import (
 )
 
 func Run() {
-	logger := logging.GetLogger()
+	logger := logger.GetLogger()
 	cfg := config.GetConfig(logger)
 	cors := cfg.CorsSettings()
 	ctx := context.Background()
@@ -39,7 +39,7 @@ func Run() {
 		logger.Fatalf("auth server conn error: %s", err.Error())
 	}
 
-	authServer.NewAuthServerClient(authConn)
+	authClient := authServer.NewAuthServerClient(authConn)
 
 	logger.Info("Init repos")
 	userRepo := userDb.NewUserRepository(postgreSQLClient, logger)
@@ -48,7 +48,7 @@ func Run() {
 	router := mux.NewRouter().PathPrefix("/api").Subrouter()
 
 	logger.Info("regiser services")
-	userService := user.NewUserService(logger, userRepo)
+	userService := user.NewUserService(logger, userRepo, authClient)
 
 	logger.Info("register handlers")
 	handlerUser := transport.NewUserHandler(logger, userService, cfg.JwtKey)
@@ -56,8 +56,9 @@ func Run() {
 
 	corsHandler := cors.Handler(router)
 
-	logger.Info("listen tcp")
-	err = http.ListenAndServe(fmt.Sprintf("%s:%s", cfg.BackendStorage.BindIp, cfg.BackendStorage.Port), corsHandler)
+	host := fmt.Sprintf("%s:%s", cfg.BackendStorage.BindIp, cfg.BackendStorage.Port)
+	logger.Infof("listen tcp on: %s", host)
+	err = http.ListenAndServe(host, corsHandler)
 	if err != nil {
 		log.Fatal(err)
 	}

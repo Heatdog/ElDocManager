@@ -5,19 +5,19 @@ import (
 	"io"
 	"net/http"
 
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/user"
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 
 	"github.com/gorilla/mux"
 )
 
 type userHandler struct {
-	logger  *logging.Logger
+	logger  *logger.Logger
 	service user.UserService
 	jwtKey  string
 }
 
-func NewUserHandler(logger *logging.Logger, service user.UserService, jwtKey string) Handler {
+func NewUserHandler(logger *logger.Logger, service user.UserService, jwtKey string) Handler {
 	return &userHandler{
 		logger:  logger,
 		service: service,

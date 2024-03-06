@@ -3,14 +3,14 @@ package userDb
 import (
 	"context"
 
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/internal/user"
 	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/client/postgresql"
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
 )
 
 type repository struct {
 	client postgresql.Client
-	logger *logging.Logger
+	logger *logger.Logger
 }
 
 func (r *repository) Create(ctx context.Context, user *user.User) error {
@@ -114,7 +114,7 @@ func (r *repository) Update(ctx context.Context, user user.User) error {
 	panic("unimplemented")
 }
 
-func NewUserRepository(client postgresql.Client, logger *logging.Logger) user.UserRepository {
+func NewUserRepository(client postgresql.Client, logger *logger.Logger) user.UserRepository {
 	return &repository{
 		client: client,
 		logger: logger,
