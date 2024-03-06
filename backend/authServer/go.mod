@@ -1,4 +1,4 @@
-module github.com/Heatdog/ElDocManager/backend/AuthServer
+module github.com/Heatdog/ElDocManager/backend/authServer
 
 go 1.21.4
 

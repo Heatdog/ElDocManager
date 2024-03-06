@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Heatdog/ElDocManager/AuthServer/internal/config"
-	"github.com/Heatdog/ElDocManager/AuthServer/internal/server"
-	jwttoken "github.com/Heatdog/ElDocManager/AuthServer/pkg/jwtToken"
+	"github.com/Heatdog/ElDocManager/backend/authServer/internal/config"
+	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server"
+	jwttoken "github.com/Heatdog/ElDocManager/backend/authServer/pkg/jwtToken"
 
 	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 	"github.com/redis/go-redis/v9"

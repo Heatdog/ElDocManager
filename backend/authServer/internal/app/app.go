@@ -5,10 +5,10 @@ import (
 	"log"
 	"net"
 
-	"github.com/Heatdog/ElDocManager/AuthServer/internal/config"
-	"github.com/Heatdog/ElDocManager/AuthServer/internal/server"
-	"github.com/Heatdog/ElDocManager/AuthServer/internal/server/db"
-	authServer "github.com/Heatdog/ElDocManager/AuthServer/pkg/proto"
+	"github.com/Heatdog/ElDocManager/backend/authServer/internal/config"
+	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server"
+	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server/db"
+	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
 
 	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 
