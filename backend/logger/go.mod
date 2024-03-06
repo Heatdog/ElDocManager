@@ -1,4 +1,4 @@
-module github.com/HeatDog/ElDocManager/logger
+module github.com/Heatdog/ElDocManager/logger
 
 go 1.21.4
 
