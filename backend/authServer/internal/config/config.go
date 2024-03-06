@@ -3,7 +3,7 @@ package config
 import (
 	"sync"
 
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 	"github.com/spf13/viper"
 )
 
@@ -30,7 +30,7 @@ type RedisStorage struct {
 var instance *Config
 var once sync.Once
 
-func GetConfig(logger *logging.Logger) *Config {
+func GetConfig(logger *logger.Logger) *Config {
 	once.Do(func() {
 		logger.Info("read application instance")
 		instance = &Config{}

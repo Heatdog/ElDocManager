@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 
-	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
+	authServer "github.com/Heatdog/ElDocManager/AuthServer/pkg/proto"
 )
 
 type GRPCServer struct {

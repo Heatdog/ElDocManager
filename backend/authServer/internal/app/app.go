@@ -5,17 +5,19 @@ import (
 	"log"
 	"net"
 
-	"github.com/Heatdog/ElDocManager/backend/authServer/internal/config"
-	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server"
-	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server/db"
-	authServer "github.com/Heatdog/ElDocManager/backend/authServer/pkg/proto"
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
+	"github.com/Heatdog/ElDocManager/AuthServer/internal/config"
+	"github.com/Heatdog/ElDocManager/AuthServer/internal/server"
+	"github.com/Heatdog/ElDocManager/AuthServer/internal/server/db"
+	authServer "github.com/Heatdog/ElDocManager/AuthServer/pkg/proto"
+
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 
 	"google.golang.org/grpc"
 )
 
 func App() {
-	logger := logging.GetLogger()
+
+	logger := logger.GetLogger()
 	cfg := config.GetConfig(logger)
 
 	storage := db.NewRedisStorage(cfg.RedisStorage, logger, cfg.TokenKey)

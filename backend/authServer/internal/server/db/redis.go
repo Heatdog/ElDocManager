@@ -6,21 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Heatdog/ElDocManager/backend/authServer/internal/config"
-	"github.com/Heatdog/ElDocManager/backend/authServer/internal/server"
-	jwttoken "github.com/Heatdog/ElDocManager/backend/authServer/pkg/jwtToken"
-	"github.com/Heatdog/ElDocManager/backend/mainServer/pkg/logging"
+	"github.com/Heatdog/ElDocManager/AuthServer/internal/config"
+	"github.com/Heatdog/ElDocManager/AuthServer/internal/server"
+	jwttoken "github.com/Heatdog/ElDocManager/AuthServer/pkg/jwtToken"
+
+	logger "github.com/Heatdog/ElDocManager/backend/logger/app"
 	"github.com/redis/go-redis/v9"
 )
 
 type RedisStorage struct {
 	storage   *redis.Client
-	logger    *logging.Logger
+	logger    *logger.Logger
 	jwtKey    string
 	jwtExpire int
 }
 
-func NewRedisStorage(config config.RedisStorage, logger *logging.Logger, jwtKey string) server.TokenRepository {
+func NewRedisStorage(config config.RedisStorage, logger *logger.Logger, jwtKey string) server.TokenRepository {
 	storage := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", config.BindIp, config.Port),
 		Password: config.Password,
