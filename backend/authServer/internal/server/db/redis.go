@@ -22,8 +22,10 @@ type RedisStorage struct {
 }
 
 func NewRedisStorage(config config.RedisStorage, logger *logger.Logger, jwtKey string) server.TokenRepository {
+	host := fmt.Sprintf("%s:%s", config.BindIp, config.Port)
+	logger.Infof("redis connectin: %s", host)
 	storage := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", config.BindIp, config.Port),
+		Addr:     host,
 		Password: config.Password,
 		DB:       0,
 	})
@@ -34,11 +36,7 @@ func NewRedisStorage(config config.RedisStorage, logger *logger.Logger, jwtKey s
 	}
 
 	return &RedisStorage{
-		storage: redis.NewClient(&redis.Options{
-			Addr:     fmt.Sprintf("%s:%s", config.BindIp, config.Port),
-			Password: config.Password,
-			DB:       0,
-		}),
+		storage:   storage,
 		logger:    logger,
 		jwtKey:    jwtKey,
 		jwtExpire: config.TokenExpiration,

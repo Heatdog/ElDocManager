@@ -28,8 +28,9 @@ func App() {
 	logger.Info("Register auth server")
 	authServer.RegisterAuthServerServer(s, srv)
 
-	logger.Info("listen on: ")
-	l, err := net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.AuthStorage.BindIp, cfg.AuthStorage.Port))
+	host := fmt.Sprintf("%s:%s", cfg.AuthStorage.BindIp, cfg.AuthStorage.Port)
+	logger.Infof("listen on: %s", host)
+	l, err := net.Listen("tcp", host)
 	if err != nil {
 		log.Fatal(err)
 	}

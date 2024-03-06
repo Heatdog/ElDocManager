@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	TokenKey     string            `yaml:"secret_key"`
-	AuthStorage  AuthServerStorage `mapstructure:"auth_server_listen"`
+	TokenKey     string            `mapstructure:"secret_key"`
+	AuthStorage  AuthServerStorage `mapstructure:"listen_server"`
 	RedisStorage RedisStorage      `mapstructure:"listen_redis"`
 }
 
@@ -35,15 +35,7 @@ func GetConfig(logger *logger.Logger) *Config {
 		logger.Info("read application instance")
 		instance = &Config{}
 
-		viper.SetConfigFile("../configs/config.yaml")
-		if err := viper.ReadInConfig(); err != nil {
-			logger.Fatal(err)
-		}
-		if err := viper.Unmarshal(instance); err != nil {
-			logger.Fatal(err)
-		}
-
-		viper.SetConfigFile("../../configs/config.yaml")
+		viper.SetConfigFile("config.yaml")
 		if err := viper.ReadInConfig(); err != nil {
 			logger.Fatal(err)
 		}
